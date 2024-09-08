@@ -1,0 +1,302 @@
+---
+title: "Revisão - Módulos 1 e 2"
+subtitle: "Vamos fortalecer nossa base de PSB!"
+format: 
+  revealjs:
+    slide-number: true
+editor: visual
+---
+
+## Dicas iniciais
+
+::: incremental
+-   Listas em R Markdown, pessoal! Tutorial no Moodle.
+-   Crie PROJETOS. Isso evita aquele pequeno caos de ficar procurando os arquivos dos sinais, pegando o caminho deles, etc.
+-   Não deixem as listas para em cima da hora, por favor! Será muito corrido para vocês, e não será possível para nós atendermos todos na véspera :/
+-   Aprendam bastante! Tirem dúvidas com a gente sempre que necessário! :D
+:::
+
+## Dataframe - Nosso tipo de dados n°1!
+
+::: incremental
+-   Possuem a forma matricial.
+-   Para criar dataframes, usamos data.frame()
+:::
+
+. . .
+
+```{r}
+#| echo: true
+df <- data.frame(
+  id = c(1:6),
+  nome = c("Ana", "Beatriz", "Carlos", "Danilo", "Eduardo", "Felipe"),
+  nota = c(89, 98, 100, 70, 78, 76)
+)
+
+print(df)
+```
+
+## Algumas funções e ferramentas úteis para mexer com dataframes (já anota aí!)
+
+-   str()
+
+-   rename()
+
+-   filter()
+
+-   df\$coluna
+
+-   df\[linha, coluna\]
+
+-   rbind() e cbind()
+
+## str()
+
+::: incremental
+-   str() - Visualizando a estrutura geral do dataframe
+:::
+
+. . .
+
+```{r}
+#| echo: true 
+
+str(df)
+```
+
+. . .
+
+::: incremental
+Essa função é interessante, pois nos permite "conhecer" um pouco mais da estrutura nosso dataframe antes de começar a manuseá-lo.
+:::
+
+## rename()
+
+::: incremental
+-   rename() - Renomeando colunas
+:::
+
+. . .
+
+```{r}
+#| echo: true 
+library(dplyr)
+
+# Podemos fazer de duas formas:
+rename(df, nome_atualizado = nome) # Sem operador pipe
+df |> rename(nome_atualizado = nome) # Com operador pipe (boa prática!!!)
+```
+
+## filter()
+
+::: incremental
+-   filter() - Selecionando linhas baseadas em critérios específicos.
+:::
+
+. . .
+
+::: columns
+::: {.column width="40%"}
+```{r}
+#| echo: true 
+library(dplyr)
+
+# Recordando nossos dados
+print(df)
+```
+:::
+
+::: {.column width="60%"}
+```{r}
+#| echo: true 
+library(dplyr)
+
+# Vou usar o pipe para nos acostumarmos!
+df |> filter(between(id, 2, 5)) |> filter(nota > 75)
+
+# Note que, se eu imprimir o df agora, não haverá nenhuma alteração. Se você quiser salvar os dados filtrados (ou com qualquer alteração), tem que fazer
+
+# df <- df |> filter(between(id, 2, 5)) |> filter(nota > 75)
+```
+:::
+:::
+
+## df\$coluna
+
+::: incremental
+-   Usamos para nos referir a uma coluna específica do df.
+:::
+
+. . .
+
+```{r}
+#| echo: true
+print(df$nome) 
+```
+
+::: incremental
+-   Podemos fazer operações nos referindo a uma coluna dessa forma.
+:::
+
+. . .
+
+```{r}
+#| echo: true
+mean(df$nota) 
+```
+
+::: incremental
+-   Adicionando uma coluna nova ao dataframe.
+:::
+
+. . .
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| echo: true
+df$idade <- c(12, 12, 11, 13, 12, 12)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+df |> filter(between(id, 1,2))
+```
+:::
+:::
+
+## df\[linha, coluna\]
+
+::: incremental
+-   Uma forma mais rústica (kkkkkk) de manusear as linhas e colunas, que também é muito importante.
+:::
+
+. . .
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| echo: true
+
+# Lembra disso aqui que eu fiz no slide anterior?
+# df |> filter(between(id, 1,2))
+
+# Vamos fazer da outra forma.
+df[1:2, ] # Lê-se 'linhas de 1 a 2, todas as colunas'
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| 
+# De forma análoga
+df[ , 1:2] # Lê-se 'todas as linhas, colunas de 1 a 2'
+```
+:::
+:::
+
+::: incremental
+-   Quando usamos a linguagem "crua", sem bibliotecas, chamamos de base R.
+:::
+
+## rbind() e cbind()
+
+::: incremental
+-   Unir, repectivamente, rows (linhas) e columns (colunas) a um dataframe.
+:::
+
+. . .
+
+```{r}
+#| echo: true
+# rbind
+aluno_novo <- c(7, "Gabriela", 88, 13)
+df <- rbind(df, aluno_novo)
+# cbind
+sobrenome <- c("Silva", "Medeiros", "Freitas", "Oliveira", "Silva", "Costa", "Pires")
+df <- cbind(df, sobrenome)
+
+# Repare que cbind adiciona a coluna ao fim. Para escolher a posição da coluna, recomendo usar select(nome, sobrenome, etc) da biblioteca dplyr.
+print(df)
+```
+
+## Importando sinais
+
+::: incremental
+-   É bom que você esteja em um PROJETO. Recomendo que você tenha uma pasta para cada Lista, e dentro dela, já deixe os arquivos dos sinais que terá que utilizar. Essa pasta será o seu Projeto.
+:::
+
+. . .
+
+::: columns
+::: {.column width="60%"}
+
+```{r}
+#| echo: true
+
+library(openxlsx)
+library(readr)
+
+df_xslx <- read.xlsx("V16C1RCC92.xlsx")
+df_csv <- read_delim("V16C1RCC92.csv", delim = ";")
+df_txt <- read.table("V16C1RCC92.txt",header = TRUE, sep = "\t", dec = ".", skip = 1)
+```
+
+:::
+::: {.column width="40%"}
+![](img1.png)
+:::
+:::
+## Visualizando sinais - ggplot
+
+. . .
+
+```{r}
+#| echo: true
+library(ggplot2)
+
+df_G1X <- data.frame(tempo = df_csv$`[Time]`, amplitude = df_csv$`[G1.X]`)
+ggplot(df_G1X, aes(x = tempo, y = amplitude)) + geom_line() + theme_bw() + labs(x= "Tempo (s)", y = "Amplitude G1X (mV)")
+```
+
+## Visualizando sinais - Dygraphs
+. . .
+
+```{r}
+#| echo: true
+library(dygraphs)
+
+dygraph(df_G1X, xlab = "Tempo (s)", ylab = "Amplitude G1X (mV)") |> dyRangeSelector()
+```
+
+
+## Simulando sinais
+. . .
+
+
+```{r}
+#| echo: true
+set.seed(123)
+
+fs <- 100
+dt <- 1/fs
+
+t <- seq(from = 0, to = 10, by = dt)
+amp_com_ruido <- 10 + sin(2*pi*60*t) + rnorm(n = length(t), mean = 0.3, sd = 0.1)
+
+df <- data.frame(tempo = t, amplitude = amp_com_ruido) 
+```
+
+
+## Simulando sinais
+. . .
+```{r}
+dygraph(df, xlab = "Tempo (s)", ylab = "Amplitude (mV)") |> dyRangeSelector()
+```
+
+
+## Dúvidas? :)
+
